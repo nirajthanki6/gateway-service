@@ -1,15 +1,15 @@
 spring:
   application:
-    name: GATEWAY-SERVICE
+    name: gateway-service
   cloud:
     gateway:
       routes:
         - id: order-service
-          uri: lb://ORDER-SERVICE
+          uri: http://ORDER-SERVICE:34740
           predicates:
             - Path=/api/orders/**
         - id: payment-service
-          uri: lb://PAYMENT-SERVICE
+          uri: http://PAYMENT-SERVICE:13063
           predicates:
             - Path=/api/payment/**
 server:
