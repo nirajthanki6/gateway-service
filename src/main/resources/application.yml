@@ -5,11 +5,11 @@ spring:
     gateway:
       routes:
         - id: order-service
-          uri: http://ORDER-SERVICE:34740
+          uri: lb://ORDER-SERVICE:34740
           predicates:
             - Path=/api/orders/**
         - id: payment-service
-          uri: http://PAYMENT-SERVICE:13063
+          uri: lb://PAYMENT-SERVICE:13063
           predicates:
             - Path=/api/payment/**
 server:
