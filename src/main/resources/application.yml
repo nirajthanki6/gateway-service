@@ -1,6 +1,9 @@
 spring:
+  config:
+    activate:
+      on-profile: development
   application:
-    name: gateway-service
+    name: GATEWAY-SERVICE
   cloud:
     gateway:
       routes:
@@ -12,17 +15,60 @@ spring:
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
 server:
   port: 9090
 
 eureka:
+  instance:
+    preferIpAddress: false
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 20
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: release
+  application:
+    name: GATEWAY-SERVICE
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/orders/**
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/**
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
+server:
+  port: 9090
+
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    non-secure-port: 80
+    hostname: devopsusa-gateway-service.herokuapp.com
+    preferIpAddress: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 20
   client:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
       defaultZone: https://springboot-discovery.herokuapp.com/eureka
-  instance:
-    hostname: ${vcap.application.uris[0]:localhost}
-    preferIpAddress: true
-    lease-renewal-interval-in-seconds: 10
-    lease-expiration-duration-in-seconds: 20
